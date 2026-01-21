@@ -1,0 +1,19 @@
+contactId: ffdfd3ad-98e1-4f31-90a0-cedf16ef9325
+nom: Marie Martin
+email: marie.martin@techcorp.fr
+entreprise: TechCorp
+poste: Directrice Commerciale
+evenements:
+- date: '2026-01-20T10:00:00Z'
+  type: réunion
+  notes: Présentation de notre solution
+notesImportantes:
+- Décisionnaire clé
+- Budget disponible Q1 2026
+prochainesActions:
+- action: Envoyer devis personnalisé
+  dateEcheance: '2026-01-25'
+opportunites:
+- projet: Transformation digitale 2026
+  valeurEstimee: 50000.0
+dateCreation: '2026-01-21T17:07:47.993371'

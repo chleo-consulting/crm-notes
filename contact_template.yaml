@@ -1,0 +1,46 @@
+# Exemple de Contact au Format YAML
+# Ce fichier peut être utilisé comme template pour créer de nouveaux contacts
+
+contactId: 00000000-0000-0000-0000-000000000000  # Remplacer par un UUID unique
+nom: Exemple Contact
+email: exemple@societe.com
+entreprise: Société Exemple SA
+poste: Directeur Commercial
+
+# Chronologie des événements et interactions
+evenements:
+- date: '2026-01-15T10:00:00Z'
+  type: appel
+  notes: Premier contact téléphonique - Intérêt pour nos services
+- date: '2026-01-18T14:30:00Z'
+  type: réunion
+  notes: Présentation de notre offre - Très réceptif
+- date: '2026-01-20T09:00:00Z'
+  type: email
+  notes: Envoi de la proposition commerciale détaillée
+
+# Notes importantes à retenir
+notesImportantes:
+- Décideur final pour le budget
+- Préfère être contacté le matin
+- Intéressé par une solution sur-mesure
+- Budget disponible Q1 2026
+
+# Actions à réaliser avec échéances
+prochainesActions:
+- action: Relance suite à l'envoi de la proposition
+  dateEcheance: '2026-01-25'
+- action: Planifier une démonstration produit
+  dateEcheance: '2026-02-01'
+- action: Préparer le contrat de partenariat
+  dateEcheance: '2026-02-10'
+
+# Opportunités business identifiées
+opportunites:
+- projet: Transformation digitale 2026
+  valeurEstimee: 50000
+- projet: Formation des équipes
+  valeurEstimee: 15000
+
+# Date de création du contact (générée automatiquement)
+dateCreation: '2026-01-15T08:00:00Z'
