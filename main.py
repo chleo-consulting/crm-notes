@@ -54,10 +54,10 @@ async def create_contact(contact: ContactCreate, db: Session = Depends(get_db)):
         email=contact.email,
         entreprise=contact.entreprise,
         poste=contact.poste,
-        evenements=json.dumps([e.dict() for e in contact.evenements], ensure_ascii=False),
+        evenements=json.dumps([e.model_dump() for e in contact.evenements], ensure_ascii=False),
         notesImportantes=json.dumps(contact.notesImportantes, ensure_ascii=False),
-        prochainesActions=json.dumps([a.dict() for a in contact.prochainesActions], ensure_ascii=False),
-        opportunites=json.dumps([o.dict() for o in contact.opportunites], ensure_ascii=False)
+        prochainesActions=json.dumps([a.model_dump() for a in contact.prochainesActions], ensure_ascii=False),
+        opportunites=json.dumps([o.model_dump() for o in contact.opportunites], ensure_ascii=False)
     )
     
     db.add(db_contact)
@@ -116,12 +116,12 @@ async def update_contact(
         raise HTTPException(status_code=404, detail="Contact non trouvé")
     
     # Mise à jour des champs fournis
-    update_data = contact_update.dict(exclude_unset=True)
+    update_data = contact_update.model_dump(exclude_unset=True)
     
     for field, value in update_data.items():
         if field in ['evenements', 'prochainesActions', 'opportunites']:
             # Conversion des listes d'objets en JSON
-            setattr(contact, field, json.dumps([item.dict() for item in value], ensure_ascii=False))
+            setattr(contact, field, json.dumps([item.model_dump() for item in value], ensure_ascii=False))
         elif field == 'notesImportantes':
             setattr(contact, field, json.dumps(value, ensure_ascii=False))
         else:
