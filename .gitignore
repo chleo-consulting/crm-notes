@@ -26,6 +26,11 @@ wheels/
 # Database
 # contacts.db  # Commented out - we want to include the initial database
 
+# Export/Import YAML files (except template)
+*.yaml
+!contact_template.yaml
+!exports/*.yaml
+
 # IDE
 .vscode/
 .idea/
