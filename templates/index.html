@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestionnaire de Contacts Business</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="container">
+            <h1>📇 Gestionnaire de Contacts Business</h1>
+            <p>Développez et gérez efficacement votre réseau professionnel</p>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Statistics Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Total Contacts</h3>
+                <div class="stat-value" id="totalContacts">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Opportunités</h3>
+                <div class="stat-value" id="totalOpportunites">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Valeur Totale</h3>
+                <div class="stat-value" id="valeurTotale">0 €</div>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <div class="search-box">
+                <input 
+                    type="text" 
+                    id="searchInput" 
+                    placeholder="🔍 Rechercher par nom, email, entreprise, poste..."
+                >
+            </div>
+            <button class="btn btn-primary" id="newContactBtn">
+                ➕ Nouveau Contact
+            </button>
+        </div>
+
+        <!-- Contacts Grid -->
+        <div class="contacts-grid" id="contactsContainer">
+            <div class="loading">
+                <div class="spinner"></div>
+                <p>Chargement des contacts...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Create/Edit Contact -->
+    <div class="modal" id="contactModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Nouveau Contact</h2>
+                <button class="close-btn" id="closeModal">&times;</button>
+            </div>
+
+            <form id="contactForm">
+                <!-- Informations de base -->
+                <div class="form-group">
+                    <label for="nom">Nom complet *</label>
+                    <input type="text" id="nom" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email">
+                </div>
+
+                <div class="form-group">
+                    <label for="entreprise">Entreprise</label>
+                    <input type="text" id="entreprise">
+                </div>
+
+                <div class="form-group">
+                    <label for="poste">Poste</label>
+                    <input type="text" id="poste">
+                </div>
+
+                <!-- Événements -->
+                <div class="form-group">
+                    <label>📅 Événements / Chronologie</label>
+                    <div class="dynamic-list" id="evenementsList"></div>
+                    <button type="button" class="btn-add" id="addEventBtn">+ Ajouter un événement</button>
+                </div>
+
+                <!-- Notes importantes -->
+                <div class="form-group">
+                    <label>📝 Notes Importantes</label>
+                    <div class="dynamic-list" id="notesList"></div>
+                    <button type="button" class="btn-add" id="addNoteBtn">+ Ajouter une note</button>
+                </div>
+
+                <!-- Prochaines actions -->
+                <div class="form-group">
+                    <label>✅ Prochaines Actions</label>
+                    <div class="dynamic-list" id="actionsList"></div>
+                    <button type="button" class="btn-add" id="addActionBtn">+ Ajouter une action</button>
+                </div>
+
+                <!-- Opportunités -->
+                <div class="form-group">
+                    <label>💰 Opportunités</label>
+                    <div class="dynamic-list" id="opportunitesList"></div>
+                    <button type="button" class="btn-add" id="addOpportunityBtn">+ Ajouter une opportunité</button>
+                </div>
+
+                <!-- Actions -->
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="contactManager.closeModal()">
+                        Annuler
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        💾 Enregistrer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
