@@ -120,8 +120,8 @@ async def update_contact(
     
     for field, value in update_data.items():
         if field in ['evenements', 'prochainesActions', 'opportunites']:
-            # Conversion des listes d'objets en JSON
-            setattr(contact, field, json.dumps([item.model_dump() for item in value], ensure_ascii=False))
+            # model_dump() retourne déjà des dictionnaires, pas besoin de .model_dump() sur chaque item
+            setattr(contact, field, json.dumps(value, ensure_ascii=False))
         elif field == 'notesImportantes':
             setattr(contact, field, json.dumps(value, ensure_ascii=False))
         else:
