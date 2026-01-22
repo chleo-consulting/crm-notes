@@ -46,8 +46,9 @@ app = FastAPI(
 
     # Tags
     openapi_tags=[
+        {"name": "Home"},
         {"name": "Contacts", "description": "Gestion des contacts"},
-        {"name": "Stats", "description": "Statistiques"}
+        {"name": "Statistiques", "description": "Statistiques"}
     ],
 )
 
@@ -107,7 +108,7 @@ def startup_event():
 
 # ============= WEB ROUTES =============
 
-@app.get("/", response_class=HTMLResponse)
+@app.get("/", response_class=HTMLResponse, tags=["Home"])
 async def home(request: Request):
     """Home page with user interface"""
     version_info = getattr(app.state, "version_info", {
@@ -190,7 +191,7 @@ async def get_contact(contact_id: str, db: Session = Depends(get_db)):
     return contact.to_dict()
 
 
-@app.put("/api/contacts/{contact_id}", response_model=ContactResponse)
+@app.put("/api/contacts/{contact_id}", response_model=ContactResponse, tags=["Contacts"])
 async def update_contact(
     contact_id: str,
     contact_update: ContactUpdate,
