@@ -34,6 +34,12 @@ python export_contact.py "Jean Dupont" --output backup/jean.yaml
 
 # Forme courte
 python export_contact.py "Marie" -o exports/marie.yaml
+
+# Exporter tous les contacts dans data/contacts/
+python export_contact.py --all
+
+# Exporter tous les contacts dans un autre répertoire
+python export_contact.py --all --output exports/
 ```
 
 ### Options

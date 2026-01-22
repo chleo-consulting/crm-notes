@@ -145,13 +145,13 @@ Votre base de données est dans le fichier `data/contacts.db`.
 Pour sauvegarder vos données :
 ```bash
 # Copier la base de données
-cp data/contacts.db contacts_backup_$(date +%Y%m%d).db
+cp data/contacts.db backup/contacts_backup_$(date +%Y%m%d).db
 ```
 
 Pour restaurer une sauvegarde :
 ```bash
 # Restaurer une ancienne version
-cp contacts_backup_20260120.db data/contacts.db
+cp backup/contacts_backup_20260120.db data/contacts.db
 ```
 
 ## Arrêter l'application

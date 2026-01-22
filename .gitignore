@@ -26,6 +26,7 @@ wheels/
 # Database
 contacts.db  # Commented out - we want to include the initial database
 data/
+backup/
 
 # Export/Import YAML files (except template)
 *.yaml
