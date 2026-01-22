@@ -62,7 +62,7 @@ def import_contact_from_yaml(yaml_file, create_if_missing=False, dry_run=False):
         existing_contact = db.query(Contact).filter(Contact.contactId == contact_id).first()
         
         if existing_contact:
-            print(f"📇 Contact trouvé: {existing_contact.nom}")
+            print(f"📇 Contact found: {existing_contact.name}")
             print(f"🔄 Mode: Mise à jour")
             action = "mise à jour"
             contact = existing_contact
@@ -72,7 +72,7 @@ def import_contact_from_yaml(yaml_file, create_if_missing=False, dry_run=False):
                 print(f"💡 Utilisez --create-if-missing pour créer un nouveau contact", file=sys.stderr)
                 return False
             
-            print(f"➕ Contact non trouvé, création d'un nouveau contact")
+            print(f"➕ Contact not found, creating new contact")
             print(f"🆕 Mode: Création")
             action = "création"
             contact = Contact(contactId=contact_id)
@@ -84,8 +84,8 @@ def import_contact_from_yaml(yaml_file, create_if_missing=False, dry_run=False):
         
         changes = []
         
-        # Mettre à jour les champs simples
-        for field in ['nom', 'email', 'entreprise', 'poste']:
+        # Update simple fields
+        for field in ['name', 'email', 'company', 'position']:
             if field in contact_data:
                 old_value = getattr(contact, field, None)
                 new_value = contact_data[field]
@@ -97,8 +97,8 @@ def import_contact_from_yaml(yaml_file, create_if_missing=False, dry_run=False):
                     if not dry_run:
                         setattr(contact, field, new_value)
         
-        # Mettre à jour les champs JSON (listes)
-        for field in ['evenements', 'notesImportantes', 'prochainesActions', 'opportunites']:
+        # Update JSON fields (lists)
+        for field in ['events', 'importantNotes', 'nextActions', 'opportunities']:
             if field in contact_data:
                 new_value = contact_data[field]
                 
@@ -135,19 +135,19 @@ def import_contact_from_yaml(yaml_file, create_if_missing=False, dry_run=False):
         db.commit()
         db.refresh(contact)
         
-        print(f"\n✅ {action.capitalize()} réussie !")
-        print(f"📇 Contact   : {contact.nom}")
-        print(f"🆔 ID        : {contact.contactId}")
-        print(f"🏢 Entreprise: {contact.entreprise or 'N/A'}")
-        print(f"📧 Email     : {contact.email or 'N/A'}")
+        print(f"\n✅ {action.capitalize()} successful!")
+        print(f"📇 Contact  : {contact.name}")
+        print(f"🆔 ID       : {contact.contactId}")
+        print(f"🏢 Company  : {contact.company or 'N/A'}")
+        print(f"📧 Email    : {contact.email or 'N/A'}")
         
-        # Afficher un résumé des données
+        # Display summary
         contact_dict = contact.to_dict()
-        print(f"\n📊 Résumé:")
-        print(f"  • Événements       : {len(contact_dict.get('evenements', []))}")
-        print(f"  • Notes importantes: {len(contact_dict.get('notesImportantes', []))}")
-        print(f"  • Prochaines actions: {len(contact_dict.get('prochainesActions', []))}")
-        print(f"  • Opportunités     : {len(contact_dict.get('opportunites', []))}")
+        print(f"\n📊 Summary:")
+        print(f"  • Events          : {len(contact_dict.get('events', []))}")
+        print(f"  • Important notes : {len(contact_dict.get('importantNotes', []))}")
+        print(f"  • Next actions    : {len(contact_dict.get('nextActions', []))}")
+        print(f"  • Opportunities   : {len(contact_dict.get('opportunities', []))}")
         
         return True
         
@@ -171,19 +171,19 @@ def preview_yaml_file(yaml_file):
         print(f"\n📄 Aperçu du fichier: {yaml_file}")
         print("─" * 60)
         
-        if 'nom' in contact_data:
-            print(f"📇 Nom        : {contact_data['nom']}")
+        if 'name' in contact_data:
+            print(f"📇 Name       : {contact_data['name']}")
         if 'email' in contact_data:
             print(f"📧 Email      : {contact_data['email']}")
-        if 'entreprise' in contact_data:
-            print(f"🏢 Entreprise : {contact_data['entreprise']}")
-        if 'poste' in contact_data:
-            print(f"💼 Poste      : {contact_data['poste']}")
+        if 'company' in contact_data:
+            print(f"🏢 Company    : {contact_data['company']}")
+        if 'position' in contact_data:
+            print(f"💼 Position   : {contact_data['position']}")
         if 'contactId' in contact_data:
             print(f"🆔 ID         : {contact_data['contactId']}")
         
         print(f"\n📊 Données structurées:")
-        for field in ['evenements', 'notesImportantes', 'prochainesActions', 'opportunites']:
+        for field in ['events', 'importantNotes', 'nextActions', 'opportunities']:
             if field in contact_data and isinstance(contact_data[field], list):
                 print(f"  • {field:20} : {len(contact_data[field])} élément(s)")
         

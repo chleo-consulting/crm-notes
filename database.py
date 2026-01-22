@@ -1,5 +1,5 @@
 """
-Module de gestion de la base de données SQLite pour les fiches de contact
+SQLite database management module for contact records
 """
 from sqlalchemy import create_engine, Column, String, Text, DateTime
 from sqlalchemy.ext.declarative import declarative_base
@@ -7,7 +7,7 @@ from sqlalchemy.orm import sessionmaker
 from datetime import datetime
 import json
 
-# Configuration de la base de données SQLite
+# SQLite database configuration
 DATABASE_URL = "sqlite:///./contacts.db"
 
 engine = create_engine(
@@ -21,38 +21,38 @@ Base = declarative_base()
 
 
 class Contact(Base):
-    """Modèle de la table contacts avec colonnes JSON pour les données structurées"""
+    """Contact table model with JSON columns for structured data"""
     __tablename__ = "contacts"
 
     contactId = Column(String, primary_key=True, index=True)
-    nom = Column(String, nullable=False, index=True)
+    name = Column(String, nullable=False, index=True)
     email = Column(String, index=True)
-    entreprise = Column(String, index=True)
-    poste = Column(String)
-    evenements = Column(Text)  # Stocké en JSON
-    notesImportantes = Column(Text)  # Stocké en JSON
-    prochainesActions = Column(Text)  # Stocké en JSON
-    opportunites = Column(Text)  # Stocké en JSON
-    dateCreation = Column(DateTime, default=datetime.utcnow)
+    company = Column(String, index=True)
+    position = Column(String)
+    events = Column(Text)  # Stored as JSON
+    importantNotes = Column(Text)  # Stored as JSON
+    nextActions = Column(Text)  # Stored as JSON
+    opportunities = Column(Text)  # Stored as JSON
+    createdAt = Column(DateTime, default=datetime.utcnow)
 
     def to_dict(self):
-        """Convertit l'objet Contact en dictionnaire JSON"""
+        """Convert Contact object to JSON dictionary"""
         return {
             "contactId": self.contactId,
-            "nom": self.nom,
+            "name": self.name,
             "email": self.email,
-            "entreprise": self.entreprise,
-            "poste": self.poste,
-            "evenements": json.loads(self.evenements) if self.evenements else [],
-            "notesImportantes": json.loads(self.notesImportantes) if self.notesImportantes else [],
-            "prochainesActions": json.loads(self.prochainesActions) if self.prochainesActions else [],
-            "opportunites": json.loads(self.opportunites) if self.opportunites else [],
-            "dateCreation": self.dateCreation.isoformat() if self.dateCreation else None
+            "company": self.company,
+            "position": self.position,
+            "events": json.loads(self.events) if self.events else [],
+            "importantNotes": json.loads(self.importantNotes) if self.importantNotes else [],
+            "nextActions": json.loads(self.nextActions) if self.nextActions else [],
+            "opportunities": json.loads(self.opportunities) if self.opportunities else [],
+            "createdAt": self.createdAt.isoformat() if self.createdAt else None
         }
 
 
 def get_db():
-    """Générateur de session de base de données pour FastAPI"""
+    """Database session generator for FastAPI"""
     db = SessionLocal()
     try:
         yield db
@@ -61,5 +61,5 @@ def get_db():
 
 
 def init_db():
-    """Initialise la base de données (crée les tables)"""
+    """Initialize the database (create tables)"""
     Base.metadata.create_all(bind=engine)

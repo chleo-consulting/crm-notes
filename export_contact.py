@@ -29,9 +29,9 @@ def export_contact_to_yaml(nom_contact, output_file=None):
     db = SessionLocal()
     
     try:
-        # Rechercher le contact par nom (recherche insensible à la casse)
+        # Search for contact by name (case-insensitive)
         contact = db.query(Contact).filter(
-            Contact.nom.ilike(f"%{nom_contact}%")
+            Contact.name.ilike(f"%{nom_contact}%")
         ).first()
         
         if not contact:
@@ -44,8 +44,8 @@ def export_contact_to_yaml(nom_contact, output_file=None):
         
         # Déterminer le nom du fichier de sortie
         if output_file is None:
-            # Créer un nom de fichier basé sur le nom du contact
-            safe_name = contact.nom.lower().replace(' ', '_').replace('/', '_')
+            # Create filename based on contact name
+            safe_name = contact.name.lower().replace(' ', '_').replace('/', '_')
             output_file = f"{safe_name}.yaml"
         
         # Créer le répertoire parent si nécessaire
@@ -63,9 +63,9 @@ def export_contact_to_yaml(nom_contact, output_file=None):
                 indent=2
             )
         
-        print(f"✅ Contact exporté avec succès !")
-        print(f"📇 Nom        : {contact.nom}")
-        print(f"🏢 Entreprise : {contact.entreprise or 'N/A'}")
+        print(f"✅ Contact exported successfully!")
+        print(f"📇 Name       : {contact.name}")
+        print(f"🏢 Company    : {contact.company or 'N/A'}")
         print(f"📧 Email      : {contact.email or 'N/A'}")
         print(f"📄 Fichier    : {output_file}")
         
@@ -97,11 +97,11 @@ def export_contact_to_yaml(nom_contact, output_file=None):
 
 
 def list_contacts():
-    """Liste tous les contacts disponibles dans la base"""
+    """List all available contacts in the database"""
     db = SessionLocal()
     
     try:
-        contacts = db.query(Contact).order_by(Contact.nom).all()
+        contacts = db.query(Contact).order_by(Contact.name).all()
         
         if not contacts:
             print("📇 Aucun contact dans la base de données")
@@ -111,9 +111,9 @@ def list_contacts():
         print("─" * 60)
         
         for contact in contacts:
-            entreprise = f" ({contact.entreprise})" if contact.entreprise else ""
+            company = f" ({contact.company})" if contact.company else ""
             email = f" - {contact.email}" if contact.email else ""
-            print(f"  • {contact.nom}{entreprise}{email}")
+            print(f"  • {contact.name}{company}{email}")
         
         print("─" * 60)
         

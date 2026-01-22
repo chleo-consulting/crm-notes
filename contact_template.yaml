@@ -1,46 +1,46 @@
-# Exemple de Contact au Format YAML
-# Ce fichier peut être utilisé comme template pour créer de nouveaux contacts
+# Sample Contact in YAML Format
+# This file can be used as a template to create new contacts
 
-contactId: 00000000-0000-0000-0000-000000000000  # Remplacer par un UUID unique
-nom: Exemple Contact
-email: exemple@societe.com
-entreprise: Société Exemple SA
-poste: Directeur Commercial
+contactId: 00000000-0000-0000-0000-000000000000  # Replace with a unique UUID
+name: Sample Contact
+email: sample@company.com
+company: Sample Company Inc
+position: Sales Director
 
-# Chronologie des événements et interactions
-evenements:
+# Timeline of events and interactions
+events:
 - date: '2026-01-15T10:00:00Z'
-  type: appel
-  notes: Premier contact téléphonique - Intérêt pour nos services
+  type: call
+  notes: First phone contact - Interest in our services
 - date: '2026-01-18T14:30:00Z'
-  type: réunion
-  notes: Présentation de notre offre - Très réceptif
+  type: meeting
+  notes: Presentation of our offer - Very receptive
 - date: '2026-01-20T09:00:00Z'
   type: email
-  notes: Envoi de la proposition commerciale détaillée
+  notes: Sent detailed commercial proposal
 
-# Notes importantes à retenir
-notesImportantes:
-- Décideur final pour le budget
-- Préfère être contacté le matin
-- Intéressé par une solution sur-mesure
-- Budget disponible Q1 2026
+# Important notes to remember
+importantNotes:
+- Final decision maker for budget
+- Prefers to be contacted in the morning
+- Interested in a custom solution
+- Budget available Q1 2026
 
-# Actions à réaliser avec échéances
-prochainesActions:
-- action: Relance suite à l'envoi de la proposition
-  dateEcheance: '2026-01-25'
-- action: Planifier une démonstration produit
-  dateEcheance: '2026-02-01'
-- action: Préparer le contrat de partenariat
-  dateEcheance: '2026-02-10'
+# Actions to take with deadlines
+nextActions:
+- action: Follow up on proposal submission
+  dueDate: '2026-01-25'
+- action: Schedule product demonstration
+  dueDate: '2026-02-01'
+- action: Prepare partnership contract
+  dueDate: '2026-02-10'
 
-# Opportunités business identifiées
-opportunites:
-- projet: Transformation digitale 2026
-  valeurEstimee: 50000
-- projet: Formation des équipes
-  valeurEstimee: 15000
+# Identified business opportunities
+opportunities:
+- project: Digital Transformation 2026
+  estimatedValue: 50000
+- project: Team Training
+  estimatedValue: 15000
 
-# Date de création du contact (générée automatiquement)
-dateCreation: '2026-01-15T08:00:00Z'
+# Contact creation date (generated automatically)
+createdAt: '2026-01-15T08:00:00Z'

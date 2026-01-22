@@ -1,5 +1,5 @@
 """
-Application FastAPI pour la gestion des fiches de contact
+FastAPI application for contact management
 """
 from fastapi import FastAPI, HTTPException, Depends, Request
 from fastapi.responses import HTMLResponse, JSONResponse
@@ -13,28 +13,28 @@ import uuid
 from database import get_db, init_db, Contact
 from models import ContactCreate, ContactUpdate, ContactResponse
 
-# Initialisation de l'application FastAPI
+# Initialize FastAPI application
 app = FastAPI(
-    title="Gestionnaire de Contacts Business",
-    description="API pour gérer vos fiches de contacts professionnels",
+    title="Business Contact Manager",
+    description="API to manage your professional contact records",
     version="1.0.0"
 )
 
-# Montage des fichiers statiques et templates
+# Mount static files and templates
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
-# Initialisation de la base de données au démarrage
+# Initialize database on startup
 @app.on_event("startup")
 def startup_event():
     init_db()
 
 
-# ============= ROUTES WEB =============
+# ============= WEB ROUTES =============
 
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
-    """Page d'accueil avec l'interface utilisateur"""
+    """Home page with user interface"""
     return templates.TemplateResponse("index.html", {"request": request})
 
 
@@ -42,22 +42,22 @@ async def home(request: Request):
 
 @app.post("/api/contacts", response_model=ContactResponse, status_code=201)
 async def create_contact(contact: ContactCreate, db: Session = Depends(get_db)):
-    """Créer une nouvelle fiche de contact"""
+    """Create a new contact record"""
     
-    # Génération d'un UUID unique pour le contact
+    # Generate unique UUID for the contact
     contact_id = str(uuid.uuid4())
     
-    # Création de l'objet Contact pour SQLAlchemy
+    # Create Contact object for SQLAlchemy
     db_contact = Contact(
         contactId=contact_id,
-        nom=contact.nom,
+        name=contact.name,
         email=contact.email,
-        entreprise=contact.entreprise,
-        poste=contact.poste,
-        evenements=json.dumps([e.model_dump() for e in contact.evenements], ensure_ascii=False),
-        notesImportantes=json.dumps(contact.notesImportantes, ensure_ascii=False),
-        prochainesActions=json.dumps([a.model_dump() for a in contact.prochainesActions], ensure_ascii=False),
-        opportunites=json.dumps([o.model_dump() for o in contact.opportunites], ensure_ascii=False)
+        company=contact.company,
+        position=contact.position,
+        events=json.dumps([e.model_dump() for e in contact.events], ensure_ascii=False),
+        importantNotes=json.dumps(contact.importantNotes, ensure_ascii=False),
+        nextActions=json.dumps([a.model_dump() for a in contact.nextActions], ensure_ascii=False),
+        opportunities=json.dumps([o.model_dump() for o in contact.opportunities], ensure_ascii=False)
     )
     
     db.add(db_contact)
@@ -72,32 +72,32 @@ async def get_contacts(
     search: str = None,
     db: Session = Depends(get_db)
 ):
-    """Récupérer la liste de tous les contacts avec recherche optionnelle"""
+    """Get list of all contacts with optional search"""
     
     query = db.query(Contact)
     
-    # Filtrage par recherche si fournie
+    # Filter by search if provided
     if search:
         search_filter = f"%{search}%"
         query = query.filter(
-            (Contact.nom.like(search_filter)) |
+            (Contact.name.like(search_filter)) |
             (Contact.email.like(search_filter)) |
-            (Contact.entreprise.like(search_filter)) |
-            (Contact.poste.like(search_filter))
+            (Contact.company.like(search_filter)) |
+            (Contact.position.like(search_filter))
         )
     
-    contacts = query.order_by(Contact.dateCreation.desc()).all()
+    contacts = query.order_by(Contact.createdAt.desc()).all()
     return [contact.to_dict() for contact in contacts]
 
 
 @app.get("/api/contacts/{contact_id}", response_model=ContactResponse)
 async def get_contact(contact_id: str, db: Session = Depends(get_db)):
-    """Récupérer une fiche de contact spécifique par ID"""
+    """Get a specific contact record by ID"""
     
     contact = db.query(Contact).filter(Contact.contactId == contact_id).first()
     
     if not contact:
-        raise HTTPException(status_code=404, detail="Contact non trouvé")
+        raise HTTPException(status_code=404, detail="Contact not found")
     
     return contact.to_dict()
 
@@ -108,21 +108,21 @@ async def update_contact(
     contact_update: ContactUpdate,
     db: Session = Depends(get_db)
 ):
-    """Mettre à jour une fiche de contact existante"""
+    """Update an existing contact record"""
     
     contact = db.query(Contact).filter(Contact.contactId == contact_id).first()
     
     if not contact:
-        raise HTTPException(status_code=404, detail="Contact non trouvé")
+        raise HTTPException(status_code=404, detail="Contact not found")
     
-    # Mise à jour des champs fournis
+    # Update provided fields
     update_data = contact_update.model_dump(exclude_unset=True)
     
     for field, value in update_data.items():
-        if field in ['evenements', 'prochainesActions', 'opportunites']:
-            # model_dump() retourne déjà des dictionnaires, pas besoin de .model_dump() sur chaque item
+        if field in ['events', 'nextActions', 'opportunities']:
+            # model_dump() already returns dictionaries
             setattr(contact, field, json.dumps(value, ensure_ascii=False))
-        elif field == 'notesImportantes':
+        elif field == 'importantNotes':
             setattr(contact, field, json.dumps(value, ensure_ascii=False))
         else:
             setattr(contact, field, value)
@@ -135,41 +135,41 @@ async def update_contact(
 
 @app.delete("/api/contacts/{contact_id}")
 async def delete_contact(contact_id: str, db: Session = Depends(get_db)):
-    """Supprimer une fiche de contact"""
+    """Delete a contact record"""
     
     contact = db.query(Contact).filter(Contact.contactId == contact_id).first()
     
     if not contact:
-        raise HTTPException(status_code=404, detail="Contact non trouvé")
+        raise HTTPException(status_code=404, detail="Contact not found")
     
     db.delete(contact)
     db.commit()
     
-    return {"message": "Contact supprimé avec succès", "contactId": contact_id}
+    return {"message": "Contact deleted successfully", "contactId": contact_id}
 
 
 @app.get("/api/stats")
 async def get_stats(db: Session = Depends(get_db)):
-    """Obtenir des statistiques sur les contacts"""
+    """Get statistics about contacts"""
     
     total_contacts = db.query(Contact).count()
     
     contacts = db.query(Contact).all()
-    total_opportunites = 0
-    valeur_totale = 0.0
+    total_opportunities = 0
+    total_value = 0.0
     
     for contact in contacts:
-        if contact.opportunites:
-            opps = json.loads(contact.opportunites)
-            total_opportunites += len(opps)
+        if contact.opportunities:
+            opps = json.loads(contact.opportunities)
+            total_opportunities += len(opps)
             for opp in opps:
-                if 'valeurEstimee' in opp and opp['valeurEstimee']:
-                    valeur_totale += float(opp['valeurEstimee'])
+                if 'estimatedValue' in opp and opp['estimatedValue']:
+                    total_value += float(opp['estimatedValue'])
     
     return {
         "totalContacts": total_contacts,
-        "totalOpportunites": total_opportunites,
-        "valeurTotaleOpportunites": valeur_totale
+        "totalOpportunities": total_opportunities,
+        "totalOpportunitiesValue": total_value
     }
 
 
