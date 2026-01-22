@@ -12,6 +12,7 @@ import argparse
 import sys
 import yaml
 import json
+import uuid
 from pathlib import Path
 from database import SessionLocal, Contact
 
@@ -49,18 +50,30 @@ def import_contact_from_yaml(yaml_file, create_if_missing=False, dry_run=False):
     if not isinstance(contact_data, dict):
         print(f"❌ Format YAML invalide: le fichier doit contenir un dictionnaire", file=sys.stderr)
         return False
-    
-    if 'contactId' not in contact_data:
-        print(f"❌ Le fichier YAML doit contenir un champ 'contactId'", file=sys.stderr)
-        return False
-    
+
     db = SessionLocal()
-    
+
     try:
-        # Rechercher le contact existant par ID
-        contact_id = contact_data['contactId']
-        existing_contact = db.query(Contact).filter(Contact.contactId == contact_id).first()
-        
+        existing_contact = None
+        contact_id= None
+        # Rechercher le contact existant
+        if 'contactId' in contact_data and contact_data['contactId']:
+            # Si contactId est présent, rechercher par ID
+            contact_id = contact_data['contactId']
+            existing_contact = db.query(Contact).filter(
+                Contact.contactId == contact_id).first()
+            search_method = f"ID {contact_id}"
+        elif 'name' in contact_data and contact_data['name']:
+            # Si contactId absent, rechercher par name
+            contact_name = contact_data['name']
+            existing_contact = db.query(Contact).filter(
+                Contact.name.ilike(contact_name)).first()
+            search_method = f"name '{contact_name}'"
+        else:
+            print(
+                f"❌ Le fichier YAML doit contenir au moins 'contactId' ou 'name'", file=sys.stderr)
+            return False
+
         if existing_contact:
             print(f"📇 Contact found: {existing_contact.name}")
             print(f"🔄 Mode: Mise à jour")
@@ -68,14 +81,23 @@ def import_contact_from_yaml(yaml_file, create_if_missing=False, dry_run=False):
             contact = existing_contact
         else:
             if not create_if_missing:
-                print(f"❌ Contact avec ID {contact_id} non trouvé", file=sys.stderr)
+                print(f"❌ Contact {contact_data['name']} avec ID {contact_id} non trouvé", file=sys.stderr)
                 print(f"💡 Utilisez --create-if-missing pour créer un nouveau contact", file=sys.stderr)
                 return False
             
             print(f"➕ Contact not found, creating new contact")
             print(f"🆕 Mode: Création")
             action = "création"
-            contact = Contact(contactId=contact_id)
+
+            # Créer un nouveau contact
+            contact = Contact()
+
+            # Assigner le contactId s'il existe, sinon il sera généré automatiquement
+            if 'contactId' in contact_data and contact_data['contactId']:
+                contact.contactId = contact_data['contactId']
+            else:
+                contact.contactId = str(uuid.uuid4())
+
             db.add(contact)
         
         # Afficher les changements
@@ -85,7 +107,7 @@ def import_contact_from_yaml(yaml_file, create_if_missing=False, dry_run=False):
         changes = []
         
         # Update simple fields
-        for field in ['name', 'email', 'company', 'position']:
+        for field in ['name', 'email', 'phone', 'company', 'position']:
             if field in contact_data:
                 old_value = getattr(contact, field, None)
                 new_value = contact_data[field]
@@ -140,6 +162,7 @@ def import_contact_from_yaml(yaml_file, create_if_missing=False, dry_run=False):
         print(f"🆔 ID       : {contact.contactId}")
         print(f"🏢 Company  : {contact.company or 'N/A'}")
         print(f"📧 Email    : {contact.email or 'N/A'}")
+        print(f"📧 Phone    : {contact.phone or 'N/A'}")
         
         # Display summary
         contact_dict = contact.to_dict()
@@ -175,6 +198,8 @@ def preview_yaml_file(yaml_file):
             print(f"📇 Name       : {contact_data['name']}")
         if 'email' in contact_data:
             print(f"📧 Email      : {contact_data['email']}")
+        if 'phone' in contact_data:
+            print(f"📧 Phone      : {contact_data['phone']}")
         if 'company' in contact_data:
             print(f"🏢 Company    : {contact_data['company']}")
         if 'position' in contact_data:

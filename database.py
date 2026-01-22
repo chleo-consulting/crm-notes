@@ -27,6 +27,7 @@ class Contact(Base):
     contactId = Column(String, primary_key=True, index=True)
     name = Column(String, nullable=False, index=True)
     email = Column(String, index=True)
+    phone = Column(String, index=True)
     company = Column(String, index=True)
     position = Column(String)
     events = Column(Text)  # Stored as JSON
@@ -41,6 +42,7 @@ class Contact(Base):
             "contactId": self.contactId,
             "name": self.name,
             "email": self.email,
+            "phone": self.phone,
             "company": self.company,
             "position": self.position,
             "events": json.loads(self.events) if self.events else [],

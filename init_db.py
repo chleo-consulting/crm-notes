@@ -27,6 +27,7 @@ def init_sample_data():
             "contactId": "550e8400-e29b-41d4-a716-446655440000",
             "name": "John Smith",
             "email": "john.smith@example.com",
+            "phone": "+1234567890",
             "company": "ACME Corp",
             "position": "Marketing Director",
             "events": [
@@ -60,6 +61,7 @@ def init_sample_data():
             contactId=sample_contact["contactId"],
             name=sample_contact["name"],
             email=sample_contact["email"],
+            phone=sample_contact["phone"],
             company=sample_contact["company"],
             position=sample_contact["position"],
             events=json.dumps(sample_contact["events"], ensure_ascii=False),
