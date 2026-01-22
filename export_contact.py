@@ -6,6 +6,8 @@ Usage:
     python export_contact.py "Jean Dupont"
     python export_contact.py "Marie Martin" --output marie.yaml
     python export_contact.py "Jean Dupont" -o exports/jean.yaml
+    python export_contact.py --all
+    python export_contact.py --all --output exports/
 """
 
 import argparse
@@ -46,7 +48,7 @@ def export_contact_to_yaml(nom_contact, output_file=None):
         if output_file is None:
             # Create filename based on contact name
             safe_name = contact.name.lower().replace(' ', '_').replace('/', '_')
-            output_file = f"{safe_name}.yaml"
+            output_file = f"data/contacts/{safe_name}.yaml"
         
         # Créer le répertoire parent si nécessaire
         output_path = Path(output_file)
@@ -67,7 +69,7 @@ def export_contact_to_yaml(nom_contact, output_file=None):
         print(f"📇 Name       : {contact.name}")
         print(f"🏢 Company    : {contact.company or 'N/A'}")
         print(f"📧 Email      : {contact.email or 'N/A'}")
-        print(f"📧 Phone      : {contact.phone or 'N/A'}")
+        print(f"📞 Phone      : {contact.phone or 'N/A'}")
         print(f"📄 Fichier    : {output_file}")
         
         # Afficher un aperçu du contenu
@@ -92,6 +94,91 @@ def export_contact_to_yaml(nom_contact, output_file=None):
         import traceback
         traceback.print_exc()
         return False
+    
+    finally:
+        db.close()
+
+
+def export_all_contacts(output_dir=None):
+    """
+    Exporte tous les contacts de la base de données vers des fichiers YAML
+    
+    Args:
+        output_dir (str): Répertoire de sortie (par défaut: data/contacts/)
+    
+    Returns:
+        tuple: (nombre de succès, nombre d'échecs)
+    """
+    db = SessionLocal()
+    
+    # Définir le répertoire de sortie par défaut
+    if output_dir is None:
+        output_dir = "data/contacts/"
+    
+    # S'assurer que le chemin se termine par /
+    output_dir = output_dir.rstrip('/') + '/'
+    
+    try:
+        # Récupérer tous les contacts
+        contacts = db.query(Contact).order_by(Contact.name).all()
+        
+        if not contacts:
+            print("📇 Aucun contact dans la base de données")
+            return 0, 0
+        
+        print(f"\n🚀 Export de {len(contacts)} contact(s)...")
+        print(f"📁 Répertoire de sortie: {output_dir}")
+        print("─" * 60)
+        
+        success_count = 0
+        error_count = 0
+        
+        # Créer le répertoire de sortie
+        output_path = Path(output_dir)
+        output_path.mkdir(parents=True, exist_ok=True)
+        
+        # Exporter chaque contact
+        for i, contact in enumerate(contacts, 1):
+            try:
+                # Créer un nom de fichier sûr
+                safe_name = contact.name.lower().replace(' ', '_').replace('/', '_')
+                output_file = f"{output_dir}{safe_name}.yaml"
+                
+                # Convertir le contact en dictionnaire
+                contact_dict = contact.to_dict()
+                
+                # Exporter vers YAML
+                with open(output_file, 'w', encoding='utf-8') as f:
+                    yaml.dump(
+                        contact_dict,
+                        f,
+                        allow_unicode=True,
+                        default_flow_style=False,
+                        sort_keys=False,
+                        indent=2
+                    )
+                
+                company = f" ({contact.company})" if contact.company else ""
+                print(f"  [{i}/{len(contacts)}] ✅ {contact.name}{company} → {output_file}")
+                success_count += 1
+                
+            except Exception as e:
+                print(f"  [{i}/{len(contacts)}] ❌ {contact.name} - Erreur: {e}")
+                error_count += 1
+        
+        print("─" * 60)
+        print(f"\n📊 Résumé:")
+        print(f"  ✅ Succès: {success_count}")
+        print(f"  ❌ Échecs: {error_count}")
+        print(f"  📁 Fichiers créés dans: {output_dir}")
+        
+        return success_count, error_count
+        
+    except Exception as e:
+        print(f"❌ Erreur lors de l'export global: {e}", file=sys.stderr)
+        import traceback
+        traceback.print_exc()
+        return 0, 0
     
     finally:
         db.close()
@@ -132,6 +219,8 @@ Exemples d'utilisation:
   python export_contact.py "Marie" --output exports/marie.yaml
   python export_contact.py "Dupont" -o backup.yaml
   python export_contact.py --list
+  python export_contact.py --all
+  python export_contact.py --all --output exports/
         """
     )
     
@@ -143,13 +232,19 @@ Exemples d'utilisation:
     
     parser.add_argument(
         '-o', '--output',
-        help='Chemin du fichier YAML de sortie (par défaut: nom_du_contact.yaml)'
+        help='Chemin du fichier YAML de sortie (par défaut: data/contacts/nom_du_contact.yaml) ou répertoire pour --all'
     )
     
     parser.add_argument(
         '-l', '--list',
         action='store_true',
         help='Liste tous les contacts disponibles dans la base'
+    )
+    
+    parser.add_argument(
+        '-a', '--all',
+        action='store_true',
+        help='Exporte tous les contacts (répertoire par défaut: data/contacts/)'
     )
     
     args = parser.parse_args()
@@ -159,10 +254,15 @@ Exemples d'utilisation:
         list_contacts()
         return 0
     
+    # Si --all est spécifié, exporter tous les contacts
+    if args.all:
+        success, errors = export_all_contacts(args.output)
+        return 0 if errors == 0 else 1
+    
     # Vérifier qu'un nom a été fourni
     if not args.nom:
         parser.print_help()
-        print("\n❌ Erreur: Vous devez spécifier un nom de contact", file=sys.stderr)
+        print("\n❌ Erreur: Vous devez spécifier un nom de contact ou utiliser --all", file=sys.stderr)
         print("💡 Utilisez --list pour voir tous les contacts disponibles", file=sys.stderr)
         return 1
     
