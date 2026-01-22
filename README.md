@@ -64,6 +64,18 @@ ou avec uvicorn directement :
 uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
+### 4. Séquence de démarrage
+
+1. python main.py
+2. FastAPI app créée
+3. Uvicorn démarre
+4. 🔥 Event "startup" déclenché
+   ├─ init_db() s'exécute
+   └─ get_version_info() récupère Git infos
+5. app.state.version_info stocké en mémoire
+6. ✅ Serveur prêt
+7. Traite les requêtes (GET /, GET /api/contacts, etc.)
+
 ### 4. Accéder à l'application
 
 - **Interface Web** : http://localhost:8000
