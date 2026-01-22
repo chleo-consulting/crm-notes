@@ -1,63 +1,63 @@
 """
-Modèles Pydantic pour la validation des données
+Pydantic models for data validation
 """
 from pydantic import BaseModel, Field, EmailStr
 from typing import List, Optional
 from datetime import datetime
 
 
-class Evenement(BaseModel):
-    """Modèle pour un événement dans la chronologie"""
+class Event(BaseModel):
+    """Model for an event in the timeline"""
     date: str
     type: str
     notes: str
 
 
-class ProchaineAction(BaseModel):
-    """Modèle pour une prochaine action"""
+class NextAction(BaseModel):
+    """Model for a next action"""
     action: str
-    dateEcheance: str
+    dueDate: str
 
 
-class Opportunite(BaseModel):
-    """Modèle pour une opportunité business"""
-    projet: str
-    valeurEstimee: Optional[float] = None
+class Opportunity(BaseModel):
+    """Model for a business opportunity"""
+    project: str
+    estimatedValue: Optional[float] = None
 
 
 class ContactBase(BaseModel):
-    """Modèle de base pour un contact"""
-    nom: str
+    """Base model for a contact"""
+    name: str
     email: Optional[str] = None
-    entreprise: Optional[str] = None
-    poste: Optional[str] = None
-    evenements: List[Evenement] = []
-    notesImportantes: List[str] = []
-    prochainesActions: List[ProchaineAction] = []
-    opportunites: List[Opportunite] = []
+    company: Optional[str] = None
+    position: Optional[str] = None
+    events: List[Event] = []
+    importantNotes: List[str] = []
+    nextActions: List[NextAction] = []
+    opportunities: List[Opportunity] = []
 
 
 class ContactCreate(ContactBase):
-    """Modèle pour créer un contact (sans ID)"""
+    """Model for creating a contact (without ID)"""
     pass
 
 
 class ContactUpdate(BaseModel):
-    """Modèle pour mettre à jour un contact (tous les champs optionnels)"""
-    nom: Optional[str] = None
+    """Model for updating a contact (all fields optional)"""
+    name: Optional[str] = None
     email: Optional[str] = None
-    entreprise: Optional[str] = None
-    poste: Optional[str] = None
-    evenements: Optional[List[Evenement]] = None
-    notesImportantes: Optional[List[str]] = None
-    prochainesActions: Optional[List[ProchaineAction]] = None
-    opportunites: Optional[List[Opportunite]] = None
+    company: Optional[str] = None
+    position: Optional[str] = None
+    events: Optional[List[Event]] = None
+    importantNotes: Optional[List[str]] = None
+    nextActions: Optional[List[NextAction]] = None
+    opportunities: Optional[List[Opportunity]] = None
 
 
 class ContactResponse(ContactBase):
-    """Modèle de réponse pour un contact (avec ID et date)"""
+    """Response model for a contact (with ID and date)"""
     contactId: str
-    dateCreation: str
+    createdAt: str
 
     class Config:
         from_attributes = True
