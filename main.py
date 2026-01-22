@@ -9,6 +9,8 @@ from sqlalchemy.orm import Session
 from typing import List
 import json
 import uuid
+import subprocess
+from datetime import datetime
 
 from database import get_db, init_db, Contact
 from models import ContactCreate, ContactUpdate, ContactResponse
@@ -24,10 +26,54 @@ app = FastAPI(
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
+
+# ============= VERSION INFO =============
+
+def get_version_info():
+    """Get version information from Git"""
+    version_info = {
+        "version": "1.0.0",
+        "commit": "unknown",
+        "branch": "unknown",
+        "date": datetime.now().strftime("%Y-%m-%d"),
+        "repository": "https://github.com/chleo-consulting/crm-notes"
+    }
+    
+    try:
+        # Get current commit hash (short)
+        commit = subprocess.check_output(
+            ["git", "rev-parse", "--short", "HEAD"],
+            stderr=subprocess.DEVNULL
+        ).decode().strip()
+        version_info["commit"] = commit
+        
+        # Get current branch
+        branch = subprocess.check_output(
+            ["git", "rev-parse", "--abbrev-ref", "HEAD"],
+            stderr=subprocess.DEVNULL
+        ).decode().strip()
+        version_info["branch"] = branch
+        
+        # Get commit date
+        commit_date = subprocess.check_output(
+            ["git", "log", "-1", "--format=%ci"],
+            stderr=subprocess.DEVNULL
+        ).decode().strip().split()[0]
+        version_info["date"] = commit_date
+        
+    except Exception:
+        # If Git is not available or command fails, use defaults
+        pass
+    
+    return version_info
+
+
 # Initialize database on startup
 @app.on_event("startup")
 def startup_event():
     init_db()
+    # Store version info in app state
+    app.state.version_info = get_version_info()
 
 
 # ============= WEB ROUTES =============
@@ -35,7 +81,17 @@ def startup_event():
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
     """Home page with user interface"""
-    return templates.TemplateResponse("index.html", {"request": request})
+    version_info = getattr(app.state, "version_info", {
+        "version": "1.0.0",
+        "commit": "unknown",
+        "branch": "unknown",
+        "date": "unknown",
+        "repository": "https://github.com/chleo-consulting/crm-notes"
+    })
+    return templates.TemplateResponse("index.html", {
+        "request": request,
+        "version": version_info
+    })
 
 
 # ============= API ENDPOINTS =============
