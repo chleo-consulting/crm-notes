@@ -67,6 +67,7 @@ def export_contact_to_yaml(nom_contact, output_file=None):
         print(f"📇 Name       : {contact.name}")
         print(f"🏢 Company    : {contact.company or 'N/A'}")
         print(f"📧 Email      : {contact.email or 'N/A'}")
+        print(f"📧 Phone      : {contact.phone or 'N/A'}")
         print(f"📄 Fichier    : {output_file}")
         
         # Afficher un aperçu du contenu

@@ -1,0 +1,20 @@
+name: Axel BOBIN
+email: abobin@objectware.fr
+phone: "+33 6 83 57 42 87"
+company: Objectware
+position: Business Manager - Business Unit Banque Transverse
+events:
+  - date: "2026-01-22T00:00:00Z"
+    type: Email
+    notes: "Email concernant le rattachement direct à BPCE SA et présentation du projet RWA PRUNE. Mission située au siège du Groupe BPCE dans le 13ème arrondissement."
+importantNotes:
+  - "Coordonne des missions pour le secteur bancaire, notamment avec le Groupe BPCE"
+  - "Basé chez Objectware, 10 Avenue de Messine, 75008 Paris"
+  - "Contact pour des profils techniques seniors (coordinateurs SI, experts PL/SQL, Python, OpenShift)"
+nextActions:
+  - action: "Évaluer la candidature pour le poste de Coordinateur SI moteur RWA chez BPCE SA"
+    dueDate: "2026-01-29"
+opportunities:
+  - project: "Mission Coordinateur SI pour le moteur RWA PRUNE - BPCE SA (transformation PL/SQL vers Python/DockDB avec architecture OpenShift)"
+    estimatedValue: null
+createdAt: "2026-01-22T00:00:00Z"
