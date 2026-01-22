@@ -121,13 +121,13 @@ python main.py
 
 ### Réinitialiser la base de données
 ```bash
-rm contacts.db
+rm data/contacts.db
 python init_db.py
 ```
 
 ### Sauvegarder les données
 ```bash
-cp contacts.db contacts_backup_$(date +%Y%m%d).db
+cp data/contacts.db backup/contacts_backup_$(date +%Y%m%d).db
 ```
 
 ---

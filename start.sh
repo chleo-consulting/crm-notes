@@ -13,7 +13,7 @@ if ! python -c "import fastapi" 2>/dev/null; then
 fi
 
 # Vérifier si la base de données existe
-if [ ! -f "contacts.db" ]; then
+if [ ! -f "data/contacts.db" ]; then
     echo "🗄️  Initialisation de la base de données..."
     python init_db.py
     echo ""

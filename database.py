@@ -8,7 +8,7 @@ from datetime import datetime
 import json
 
 # SQLite database configuration
-DATABASE_URL = "sqlite:///./contacts.db"
+DATABASE_URL = "sqlite:///./data/contacts.db"
 
 engine = create_engine(
     DATABASE_URL, 

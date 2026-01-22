@@ -24,7 +24,8 @@ wheels/
 *.egg
 
 # Database
-# contacts.db  # Commented out - we want to include the initial database
+contacts.db  # Commented out - we want to include the initial database
+data/
 
 # Export/Import YAML files (except template)
 *.yaml

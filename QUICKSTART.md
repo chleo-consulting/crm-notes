@@ -140,18 +140,18 @@ Chaque contact contient :
 
 ## Sauvegarde des données
 
-Votre base de données est dans le fichier `contacts.db`.
+Votre base de données est dans le fichier `data/contacts.db`.
 
 Pour sauvegarder vos données :
 ```bash
 # Copier la base de données
-cp contacts.db contacts_backup_$(date +%Y%m%d).db
+cp data/contacts.db contacts_backup_$(date +%Y%m%d).db
 ```
 
 Pour restaurer une sauvegarde :
 ```bash
 # Restaurer une ancienne version
-cp contacts_backup_20260120.db contacts.db
+cp contacts_backup_20260120.db data/contacts.db
 ```
 
 ## Arrêter l'application

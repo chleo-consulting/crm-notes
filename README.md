@@ -166,7 +166,7 @@ curl http://localhost:8000/api/contacts?search=Marie
 - Les données JSON sont stockées en colonnes TEXT avec sérialisation automatique
 - Volumétrie optimisée pour quelques dizaines à centaines de contacts
 - Pas d'authentification (à ajouter pour production)
-- Backup simple : copier le fichier `contacts.db`
+- Backup simple : copier le fichier `data/contacts.db`
 
 ## 🚀 Améliorations Possibles
 
