@@ -4,6 +4,7 @@ class ContactManager {
     constructor() {
         this.contacts = [];
         this.currentContact = null;
+        this.expandedCards = new Set(); // Track which cards are expanded
         this.init();
     }
 
@@ -47,6 +48,9 @@ class ContactManager {
         document.getElementById('addNoteBtn').addEventListener('click', () => this.addNoteField());
         document.getElementById('addActionBtn').addEventListener('click', () => this.addActionField());
         document.getElementById('addOpportunityBtn').addEventListener('click', () => this.addOpportunityField());
+        
+        // Bouton pour réduire toutes les cartes
+        document.getElementById('collapseAllBtn')?.addEventListener('click', () => this.collapseAll());
     }
 
     async loadContacts(search = '') {
@@ -88,7 +92,9 @@ class ContactManager {
             return;
         }
 
-        container.innerHTML = this.contacts.map(contact => `
+        container.innerHTML = this.contacts.map(contact => {
+            const isExpanded = this.expandedCards.has(contact.contactId);
+            return `
             <div class="contact-card" data-id="${contact.contactId}">
                 <div class="contact-header">
                     <div>
@@ -96,6 +102,7 @@ class ContactManager {
                         <p style="color: var(--text-secondary); font-size: 0.9rem;">${this.escapeHtml(contact.position || '')}</p>
                     </div>
                     <div class="contact-actions">
+                        <button class="btn-icon" onclick="contactManager.toggleCardView('${contact.contactId}')" title="${isExpanded ? 'Vue résumée' : 'Vue complète'}">${isExpanded ? '🔼' : '🔽'}</button>
                         <button class="btn-icon" onclick="contactManager.editContact('${contact.contactId}')" title="Modifier">✏️</button>
                         <button class="btn-icon" onclick="contactManager.deleteContact('${contact.contactId}')" title="Supprimer">🗑️</button>
                     </div>
@@ -108,8 +115,8 @@ class ContactManager {
 
                 ${contact.events && contact.events.length > 0 ? `
                     <div class="contact-section">
-                        <h4>📅 Derniers événements</h4>
-                        ${contact.events.slice(0, 2).map(e => `
+                        <h4>📅 Derniers événements ${!isExpanded && contact.events.length > 2 ? `<span style="font-size: 0.75rem; color: var(--text-secondary);">(${contact.events.length - 2}+ masqués)</span>` : ''}</h4>
+                        ${(isExpanded ? contact.events : contact.events.slice(0, 2)).map(e => `
                             <div style="margin-bottom: 8px;">
                                 <span class="badge badge-primary">${e.type}</span>
                                 <span style="font-size: 0.85rem; color: var(--text-secondary);">${this.formatDate(e.date)}</span>
@@ -121,8 +128,8 @@ class ContactManager {
 
                 ${contact.importantNotes && contact.importantNotes.length > 0 ? `
                     <div class="contact-section">
-                        <h4>📝 Notes importantes</h4>
-                        ${contact.importantNotes.slice(0, 2).map(note => `
+                        <h4>📝 Notes importantes ${!isExpanded && contact.importantNotes.length > 2 ? `<span style="font-size: 0.75rem; color: var(--text-secondary);">(${contact.importantNotes.length - 2}+ masquées)</span>` : ''}</h4>
+                        ${(isExpanded ? contact.importantNotes : contact.importantNotes.slice(0, 2)).map(note => `
                             <p style="font-size: 0.85rem; margin-bottom: 5px;">• ${this.escapeHtml(note)}</p>
                         `).join('')}
                     </div>
@@ -130,8 +137,8 @@ class ContactManager {
 
                 ${contact.nextActions && contact.nextActions.length > 0 ? `
                     <div class="contact-section">
-                        <h4>✅ Prochaines actions</h4>
-                        ${contact.nextActions.slice(0, 2).map(action => `
+                        <h4>✅ Prochaines actions ${!isExpanded && contact.nextActions.length > 2 ? `<span style="font-size: 0.75rem; color: var(--text-secondary);">(${contact.nextActions.length - 2}+ masquées)</span>` : ''}</h4>
+                        ${(isExpanded ? contact.nextActions : contact.nextActions.slice(0, 2)).map(action => `
                             <div style="margin-bottom: 8px;">
                                 <span class="badge badge-warning">${this.formatDate(action.dueDate)}</span>
                                 <p style="font-size: 0.85rem; margin-top: 4px;">${this.escapeHtml(action.action)}</p>
@@ -142,8 +149,8 @@ class ContactManager {
 
                 ${contact.opportunities && contact.opportunities.length > 0 ? `
                     <div class="contact-section">
-                        <h4>💰 Opportunités</h4>
-                        ${contact.opportunities.map(opp => `
+                        <h4>💰 Opportunités ${!isExpanded && contact.opportunities.length > 2 ? `<span style="font-size: 0.75rem; color: var(--text-secondary);">(${contact.opportunities.length - 2}+ masquées)</span>` : ''}</h4>
+                        ${(isExpanded ? contact.opportunities : contact.opportunities.slice(0, 2)).map(opp => `
                             <div style="margin-bottom: 8px;">
                                 <p style="font-size: 0.85rem;"><strong>${this.escapeHtml(opp.project)}</strong></p>
                                 ${opp.estimatedValue ? `<span class="badge badge-success">${new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(opp.estimatedValue)}</span>` : ''}
@@ -152,7 +159,8 @@ class ContactManager {
                     </div>
                 ` : ''}
             </div>
-        `).join('');
+        `;
+        }).join('');
     }
 
     openModal(contact = null) {
@@ -359,6 +367,20 @@ class ContactManager {
 
     async searchContacts(query) {
         await this.loadContacts(query);
+    }
+
+    toggleCardView(contactId) {
+        if (this.expandedCards.has(contactId)) {
+            this.expandedCards.delete(contactId);
+        } else {
+            this.expandedCards.add(contactId);
+        }
+        this.renderContacts();
+    }
+
+    collapseAll() {
+        this.expandedCards.clear();
+        this.renderContacts();
     }
 
     formatDate(dateStr) {
