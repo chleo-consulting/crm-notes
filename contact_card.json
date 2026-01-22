@@ -1,0 +1,30 @@
+{
+    "name": "string",
+    "email": "string",
+    "phone": "string",
+    "company": "string",
+    "jobTitle": "string",
+    "events": [
+        {
+            "date": "ISO 8601",
+            "type": "string",
+            "notes": "string"
+        }
+    ],
+    "importantNotes": [
+        "string"
+    ],
+    "nextActions": [
+        {
+            "action": "string",
+            "dueDate": "YYYY-MM-DD"
+        }
+    ],
+    "opportunities": [
+        {
+            "project": "string",
+            "estimatedValue": "number"
+        }
+    ],
+    "createdAt": "ISO 8601"
+}
